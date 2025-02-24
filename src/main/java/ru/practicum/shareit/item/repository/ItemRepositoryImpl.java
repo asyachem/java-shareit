@@ -51,7 +51,8 @@ public class ItemRepositoryImpl implements ItemRepository {
             return searchedItems;
         }
 
-        items.values().stream().filter(item -> item.getName().contains(text)).forEach(searchedItems::add);
+        items.values().stream().filter(item -> (item.getName().toLowerCase().contains(text.toLowerCase()) ||
+                item.getDescription().toLowerCase().contains(text.toLowerCase())) && item.getAvailable()).forEach(searchedItems::add);
 
         return searchedItems;
     }

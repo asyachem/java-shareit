@@ -25,7 +25,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto getItemById(long id) {
+    public ItemDto getItemById(Long id) {
         return ItemMapper.toItemDto(itemRepository.getItemById(id));
     }
 
@@ -35,7 +35,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto createItem(Item item, long userId) {
+    public ItemDto createItem(Item item, Long userId) {
         User user = userRepository.getUserById(userId);
 
         item.setOwner(user);
@@ -43,7 +43,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto updateItem(long itemId, long userId, Item newItemRequest) {
+    public ItemDto updateItem(Long itemId, Long userId, Item newItemRequest) {
         User user = userRepository.getUserById(userId);
         Item item = itemRepository.getItemById(itemId);
 

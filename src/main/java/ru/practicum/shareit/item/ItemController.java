@@ -16,7 +16,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping
-    public List<ItemDto> getItemsFromUser(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public List<ItemDto> getItemsFromUser(@RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemService.getItemsFromUser(userId);
     }
 
@@ -32,12 +32,12 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto createItem(@RequestBody ItemDto item, @RequestHeader("X-Sharer-User-Id") long userId) {
+    public ItemDto createItem(@RequestBody ItemDto item, @RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemService.createItem(ItemMapper.toItem(item), userId);
     }
 
     @PatchMapping("/{id}")
-    public ItemDto updateItem(@PathVariable("id") Long id, @RequestHeader("X-Sharer-User-Id") long userId, @RequestBody ItemDto newItemRequest) {
+    public ItemDto updateItem(@PathVariable("id") Long id, @RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody ItemDto newItemRequest) {
         return itemService.updateItem(id, userId, ItemMapper.toItem(newItemRequest));
     }
 
