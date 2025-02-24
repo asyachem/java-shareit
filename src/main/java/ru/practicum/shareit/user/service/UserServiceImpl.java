@@ -3,6 +3,8 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.DuplicatedDataException;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
@@ -23,27 +25,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserById(Long id) {
-        User user = userRepository.getUserById(id);
-
-        if (user == null) {
-            throw new RuntimeException("Пользователь не найден");
-        }
-
-        return UserMapper.mapToUserDto(user);
+        return UserMapper.mapToUserDto(userRepository.getUserById(id));
     }
 
     @Override
     public UserDto createUser(User user) {
         if (user.getEmail() == null) {
-            throw new RuntimeException("Отсутствует email у пользователя");
+            throw new ValidationException("Отсутствует email у пользователя");
         }
 
         if (!emailValidator.isValid(user.getEmail())) {
-            throw new RuntimeException("Неверно указан email");
+            throw new ValidationException("Неверно указан email");
         }
 
         if (userRepository.haveUser(user.getEmail())) {
-            throw new RuntimeException(String.format("Этот E-mail \"%s\" уже используется", user.getEmail()));
+            throw new DuplicatedDataException(String.format("Этот E-mail \"%s\" уже используется", user.getEmail()));
         }
 
         return UserMapper.mapToUserDto(userRepository.createUser(user));
@@ -51,37 +47,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(User newUserRequest, Long userId) {
-        if (userId == null) {
-            throw new RuntimeException("Id пользователя должен быть указан");
-        }
-
-        User user = userRepository.getUserById(userId);
-
-        if (user == null) {
-            throw new RuntimeException("Пользователь не найден");
-        }
-
         if (newUserRequest.getEmail() != null) {
             if (!emailValidator.isValid(newUserRequest.getEmail())) {
-                throw new RuntimeException("Неверно указан email");
+                throw new ValidationException("Неверно указан email");
             }
 
             if (userRepository.haveUser(newUserRequest.getEmail())) {
-                throw new RuntimeException(String.format("Этот E-mail \"%s\" уже используется", newUserRequest.getEmail()));
+                throw new DuplicatedDataException(String.format("Этот E-mail \"%s\" уже используется", newUserRequest.getEmail()));
             }
         }
 
-        User updatedUser = UserMapper.updateUserFields(user, newUserRequest);
+        User updatedUser = UserMapper.updateUserFields(userRepository.getUserById(userId), newUserRequest);
         updatedUser = userRepository.updateUser(updatedUser);
         return UserMapper.mapToUserDto(updatedUser);
     }
 
     @Override
     public void deleteUserById(Long id) {
-        if (userRepository.getUserById(id) == null) {
-            throw new RuntimeException("Пользователь не найден");
-        }
-
         userRepository.deleteUserById(id);
     }
 }

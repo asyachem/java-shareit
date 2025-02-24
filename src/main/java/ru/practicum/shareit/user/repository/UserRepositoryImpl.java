@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user.repository;
 
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.User;
 
 import java.util.Collection;
@@ -9,7 +10,7 @@ import java.util.Map;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
-    Map<Long, User> users = new HashMap<>();
+    protected Map<Long, User> users = new HashMap<>();
 
     private Long getNextId() {
         long currentMaxId = users.keySet()
@@ -32,7 +33,11 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public User getUserById(Long id) {
-        return users.get(id);
+        User user = users.get(id);
+        if (user == null) {
+            throw new NotFoundException("Пользователь не найден");
+        }
+        return user;
     }
 
     @Override
@@ -50,6 +55,10 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void deleteUserById(Long id) {
+        User user = users.get(id);
+        if (user == null) {
+            throw new NotFoundException("Пользователь не найден");
+        }
         users.remove(id);
     }
 
