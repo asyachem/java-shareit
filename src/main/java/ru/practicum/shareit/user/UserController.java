@@ -3,6 +3,7 @@ package ru.practicum.shareit.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
@@ -27,7 +28,11 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto createUser(@RequestBody UserDto user) {
+    public UserDto createUser(@RequestBody UserDto user) throws ValidationException {
+        if (user.getEmail() == null) {
+            throw new ValidationException("Отсутствует email у пользователя");
+        }
+
         return userService.createUser(UserMapper.mapToUser(user));
     }
 

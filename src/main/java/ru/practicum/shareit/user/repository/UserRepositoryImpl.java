@@ -55,10 +55,6 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void deleteUserById(Long id) {
-        User user = users.get(id);
-        if (user == null) {
-            throw new NotFoundException("Пользователь не найден");
-        }
         users.remove(id);
     }
 

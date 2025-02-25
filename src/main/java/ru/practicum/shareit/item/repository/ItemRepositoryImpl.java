@@ -4,7 +4,6 @@ import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.*;
@@ -60,23 +59,13 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public Item createItem(Item item) {
         item.setId(getNextId());
-        validate(item);
         items.put(item.getId(), item);
         return item;
     }
 
     @Override
     public Item updateItem(Item item) {
-        validate(item);
         items.put(item.getId(), item);
         return item;
-    }
-
-    private void validate(Item item) {
-        var errors = validator.validate(item);
-        if (!errors.isEmpty()) {
-            throw new ValidationException(String.join(",", errors.stream().map(elem -> "Поле " +
-                    elem.getPropertyPath() + " " + elem.getMessage()).toList()));
-        }
     }
 }

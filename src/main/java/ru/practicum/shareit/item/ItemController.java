@@ -3,6 +3,7 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.service.ItemService;
@@ -32,7 +33,18 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto createItem(@RequestBody ItemDto item, @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ItemDto createItem(@RequestBody ItemDto item, @RequestHeader("X-Sharer-User-Id") Long userId) throws ValidationException {
+
+        if (item.getAvailable() == null) {
+            throw new ValidationException("Необходимо указать статус вещи");
+        }
+        if (item.getName().isBlank()) {
+            throw new ValidationException("Необходимо указать название вещи");
+        }
+        if (item.getDescription().isBlank()) {
+            throw new ValidationException("Необходимо указать описание вещи");
+        }
+
         return itemService.createItem(ItemMapper.toItem(item), userId);
     }
 
@@ -40,6 +52,4 @@ public class ItemController {
     public ItemDto updateItem(@PathVariable("id") Long id, @RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody ItemDto newItemRequest) {
         return itemService.updateItem(id, userId, ItemMapper.toItem(newItemRequest));
     }
-
-
 }

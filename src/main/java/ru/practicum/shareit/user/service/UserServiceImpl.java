@@ -30,9 +30,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(User user) {
-        if (user.getEmail() == null) {
-            throw new ValidationException("Отсутствует email у пользователя");
-        }
 
         if (!emailValidator.isValid(user.getEmail())) {
             throw new ValidationException("Неверно указан email");
