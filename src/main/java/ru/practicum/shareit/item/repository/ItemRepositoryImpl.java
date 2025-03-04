@@ -10,7 +10,7 @@ import java.util.*;
 
 @RequiredArgsConstructor
 @Repository
-public class ItemRepositoryImpl implements ItemRepository {
+public class ItemRepositoryImpl {
     protected Map<Long, Item> items = new HashMap<>();
 
     private final Validator validator;
@@ -24,7 +24,6 @@ public class ItemRepositoryImpl implements ItemRepository {
         return ++currentMaxId;
     }
 
-    @Override
     public Collection<Item> getItemsFromUser(Long userId) {
         List<Item> userItems = new ArrayList<>();
 
@@ -33,7 +32,6 @@ public class ItemRepositoryImpl implements ItemRepository {
         return userItems;
     }
 
-    @Override
     public Item getItemById(long id) {
         Item item = items.get(id);
         if (item == null) {
@@ -42,7 +40,6 @@ public class ItemRepositoryImpl implements ItemRepository {
         return item;
     }
 
-    @Override
     public Collection<Item> getSearchedItems(String text) {
         List<Item> searchedItems = new ArrayList<>();
 
@@ -56,14 +53,12 @@ public class ItemRepositoryImpl implements ItemRepository {
         return searchedItems;
     }
 
-    @Override
     public Item createItem(Item item) {
         item.setId(getNextId());
         items.put(item.getId(), item);
         return item;
     }
 
-    @Override
     public Item updateItem(Item item) {
         items.put(item.getId(), item);
         return item;

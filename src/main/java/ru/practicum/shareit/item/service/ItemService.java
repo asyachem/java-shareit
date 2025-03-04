@@ -15,4 +15,6 @@ public interface ItemService {
     ItemDto createItem(Item item, Long userId);
 
     ItemDto updateItem(Long id, Long userId, Item newItemRequest);
+
+    ItemDto addComment(Long itemId, Long userId, String comment);
 }
