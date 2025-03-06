@@ -19,15 +19,15 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String text; // содержимое комментария
+    private String text;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
-    private Item item; // вещь, к которой относится комментарий
+    private Item item;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")
-    private User author; // автор комментария
+    private User author;
 
-    private LocalDateTime created; // дата создания комментария
+    private LocalDateTime created;
 }

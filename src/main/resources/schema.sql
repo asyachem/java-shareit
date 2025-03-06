@@ -37,7 +37,8 @@ CREATE TABLE IF NOT EXISTS comments (
    text VARCHAR,
    item_id BIGINT,
    author_id BIGINT,
-   created TIMESTAMP
+   created TIMESTAMP,
+   CONSTRAINT fk_item FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE
 );
 
 ALTER TABLE items ADD FOREIGN KEY (owner_id) REFERENCES users (id);
@@ -49,7 +50,5 @@ ALTER TABLE bookings ADD FOREIGN KEY (item_id) REFERENCES items (id);
 ALTER TABLE bookings ADD FOREIGN KEY (booker_id) REFERENCES users (id);
 
 ALTER TABLE requests ADD FOREIGN KEY (requestor_id) REFERENCES users (id);
-
-ALTER TABLE comments ADD FOREIGN KEY (item_id) REFERENCES items (id);
 
 ALTER TABLE comments ADD FOREIGN KEY (author_id) REFERENCES users (id);

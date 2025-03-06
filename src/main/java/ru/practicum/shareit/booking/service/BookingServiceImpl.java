@@ -87,7 +87,7 @@ public class BookingServiceImpl implements BookingService {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         List<Booking> bookings = bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
 
-        return bookings.stream().map(BookingMapper :: toBookingDto).toList();
+        return bookings.stream().map(BookingMapper::toBookingDto).toList();
     }
 
 
