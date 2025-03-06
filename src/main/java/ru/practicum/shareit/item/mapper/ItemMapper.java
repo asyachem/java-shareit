@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.mapper;
 
+import ru.practicum.shareit.comment.mapper.CommentMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
@@ -11,6 +12,11 @@ public class ItemMapper {
         itemDto.setDescription(item.getDescription());
         itemDto.setAvailable(item.getAvailable());
         itemDto.setRequestId(item.getRequest() != null ? item.getRequest().getId() : null);
+
+        if (item.getComments() != null) {
+            itemDto.setComments(item.getComments().stream().map(CommentMapper::toCommentDto).toList());
+        }
+
         return itemDto;
     }
 

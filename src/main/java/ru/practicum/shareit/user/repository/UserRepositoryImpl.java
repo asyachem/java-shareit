@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Repository
-public class UserRepositoryImpl implements UserRepository {
+public class UserRepositoryImpl {
     protected Map<Long, User> users = new HashMap<>();
 
     private Long getNextId() {
@@ -21,17 +21,14 @@ public class UserRepositoryImpl implements UserRepository {
         return ++currentMaxId;
     }
 
-    @Override
     public Collection<User> getUsers() {
         return users.values();
     }
 
-    @Override
     public boolean haveUser(String email) {
         return users.values().stream().anyMatch(user -> user.getEmail().equals(email));
     }
 
-    @Override
     public User getUserById(Long id) {
         User user = users.get(id);
         if (user == null) {
@@ -40,22 +37,18 @@ public class UserRepositoryImpl implements UserRepository {
         return user;
     }
 
-    @Override
     public User createUser(User user) {
         user.setId(getNextId());
         users.put(user.getId(), user);
         return user;
     }
 
-    @Override
     public User updateUser(User newUser) {
         users.put(newUser.getId(), newUser);
         return newUser;
     }
 
-    @Override
     public void deleteUserById(Long id) {
         users.remove(id);
     }
-
 }
