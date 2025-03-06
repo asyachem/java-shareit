@@ -1,7 +1,15 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.mapping.Any;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.Status;
+import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.comment.dto.CommentDto;
+import ru.practicum.shareit.comment.mapper.CommentMapper;
+import ru.practicum.shareit.comment.model.Comment;
+import ru.practicum.shareit.comment.repository.CommentRepository;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -11,28 +19,36 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final BookingRepository bookingRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     public List<ItemDto> getItemsFromUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
-        return itemRepository.findByOwnerId(user.getId()).stream().map(ItemMapper::toItemDto).toList();
+        return itemRepository.findByOwnerIdWithComments(user.getId()).stream().map(ItemMapper::toItemDto).toList();
     }
 
     @Override
     public ItemDto getItemById(Long id) {
-        return ItemMapper.toItemDto(itemRepository.findById(id).orElseThrow(() -> new NotFoundException("Объект не найден")));
+        Item item = itemRepository.findByIdWithComments(id).orElseThrow(() -> new NotFoundException("Объект не найден"));
+
+        return ItemMapper.toItemDto(item);
     }
 
     @Override
     public List<ItemDto> getSearchedItems(String text) {
-        return itemRepository.findByNameOrDescription(text).stream().map(ItemMapper::toItemDto).toList();
+        return itemRepository.findByNameOrDescriptionWithComments(text).stream().map(ItemMapper::toItemDto).toList();
     }
 
     @Override
@@ -46,7 +62,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto updateItem(Long itemId, Long userId, Item newItemRequest) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Объект не найден"));
+        Item item = itemRepository.findByIdWithComments(itemId).orElseThrow(() -> new NotFoundException("Объект не найден"));
 
         if (!item.getOwner().getId().equals(user.getId())) {
             throw new ValidationException("Этот пользователь не может редактировать объект");
@@ -58,14 +74,35 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto addComment(Long itemId, Long userId, String comment) {
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Объект не найден"));
+    public CommentDto addComment(Long itemId, Long userId, String text) {
+        Item item = itemRepository.findByIdWithComments(itemId).orElseThrow(() -> new NotFoundException("Объект не найден"));
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+        List<Booking> booking = bookingRepository.findAllByBookerIdOrderByStartDesc(user.getId());
+        boolean isThisBooker = false;
 
-        if (!item.getOwner().getId().equals(user.getId())) {
+        for (Booking bookingItem : booking) {
+            if (bookingItem.getItem().getId().equals(item.getId())) {
+                isThisBooker = true;
+
+                if (bookingItem.getStatus() == Status.APPROVED && bookingItem.getEnd().isAfter(LocalDateTime.now())) {
+                    throw new ValidationException("Этот пользователь не может добавить комментарий");
+                }
+
+                break;
+            }
+        }
+
+        if (!isThisBooker) {
             throw new ValidationException("Этот пользователь не может добавить комментарий");
         }
 
-        return new ItemDto();
+        Comment comment = new Comment();
+        comment.setItem(item);
+        comment.setText(text);
+        comment.setAuthor(user);
+        comment.setCreated(LocalDateTime.now());
+        commentRepository.save(comment);
+
+        return CommentMapper.toCommentDto(comment);
     }
 }

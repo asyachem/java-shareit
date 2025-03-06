@@ -1,8 +1,11 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.mapping.Any;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.comment.dto.CommentDto;
+import ru.practicum.shareit.comment.model.CommentRequest;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
@@ -59,7 +62,7 @@ public class ItemController {
 
     @PostMapping("/{itemId}/comment")
     @ResponseStatus(HttpStatus.CREATED)
-    public ItemDto addComment(@PathVariable("itemId") Long itemId, @RequestBody String text, @RequestHeader("X-Sharer-User-Id") Long userId) {
-        return itemService.addComment(itemId, userId, text);
+    public CommentDto addComment(@PathVariable("itemId") Long itemId, @RequestBody CommentRequest request, @RequestHeader("X-Sharer-User-Id") Long userId) {
+        return itemService.addComment(itemId, userId, request.getText());
     }
 }

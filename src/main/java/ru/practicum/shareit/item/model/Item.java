@@ -6,9 +6,11 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -38,6 +40,9 @@ public class Item {
     @OneToOne
     @JoinColumn(name = "request_id")
     private ItemRequest request;
+
+    @OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
+    private List<Comment> comments;
 
     @Override
     public boolean equals(Object o) {
