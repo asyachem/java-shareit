@@ -47,7 +47,7 @@ public class ItemController {
         if (item.getName().isBlank()) {
             throw new ValidationException("Необходимо указать название вещи");
         }
-        if (item.getDescription().isBlank()) {
+        if (item.getDescription() == null) {
             throw new ValidationException("Необходимо указать описание вещи");
         }
 
