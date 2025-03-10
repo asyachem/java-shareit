@@ -1,17 +1,18 @@
 package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRequest;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.exception.ValidationException;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/bookings")
+@Validated
 public class BookingController {
     private final BookingService bookingService;
 
@@ -32,10 +33,6 @@ public class BookingController {
 
     @PostMapping
     public BookingDto createBooking(@RequestBody BookingRequest booking, @RequestHeader("X-Sharer-User-Id") Long userId) {
-        if (booking.getStart() == null || booking.getEnd() == null) {
-            throw new ValidationException("Неверно указана дата бронирования");
-        }
-
         return bookingService.createBooking(booking, userId);
     }
 

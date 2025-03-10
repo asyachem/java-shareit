@@ -2,10 +2,12 @@ package ru.practicum.shareit.booking.mapper;
 
 import lombok.RequiredArgsConstructor;
 import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRequest;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.mapper.UserMapper;
 
 @RequiredArgsConstructor
@@ -21,14 +23,14 @@ public class BookingMapper {
         return bookingDto;
     }
 
-    public static Booking toBookingFromRequest(BookingRequest request, Item item) {
+    public static Booking toBookingFromRequest(BookingRequest request, Item item, User booker) {
         Booking booking = new Booking();
         booking.setId(request.getId());
         booking.setStart(request.getStart());
         booking.setEnd(request.getEnd());
         booking.setItem(item);
-        booking.setBooker(request.getBooker());
-        booking.setStatus(request.getStatus());
+        booking.setBooker(booker);
+        booking.setStatus(Status.WAITING);
         return booking;
     }
 }

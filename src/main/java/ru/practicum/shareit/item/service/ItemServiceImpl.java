@@ -60,7 +60,7 @@ public class ItemServiceImpl implements ItemService {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         Item item = itemRepository.findByIdWithComments(itemId).orElseThrow(() -> new NotFoundException("Объект не найден"));
 
-        if (!item.getOwner().getId().equals(user.getId())) {
+        if (!item.getOwner().equals(user)) {
             throw new ValidationException("Этот пользователь не может редактировать объект");
         }
 
@@ -77,7 +77,7 @@ public class ItemServiceImpl implements ItemService {
         boolean isThisBooker = false;
 
         for (Booking bookingItem : booking) {
-            if (bookingItem.getItem().getId().equals(item.getId())) {
+            if (bookingItem.getItem().equals(item)) {
                 isThisBooker = true;
 
                 if (bookingItem.getStatus() == Status.APPROVED && bookingItem.getEnd().isAfter(LocalDateTime.now())) {
@@ -92,11 +92,7 @@ public class ItemServiceImpl implements ItemService {
             throw new ValidationException("Этот пользователь не может добавить комментарий");
         }
 
-        Comment comment = new Comment();
-        comment.setItem(item);
-        comment.setText(text);
-        comment.setAuthor(user);
-        comment.setCreated(LocalDateTime.now());
+        Comment comment = CommentMapper.toComment(item, text, user);
         commentRepository.save(comment);
 
         return CommentMapper.toCommentDto(comment);
