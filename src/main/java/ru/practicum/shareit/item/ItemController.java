@@ -1,13 +1,17 @@
 package ru.practicum.shareit.item;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.comment.dto.CommentDto;
+import ru.practicum.shareit.comment.model.CommentRequest;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.service.ItemService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -28,6 +32,9 @@ public class ItemController {
 
     @GetMapping("/search")
     public List<ItemDto> getSearchedItems(@RequestParam("text") String text) {
+        if (text == null || text.isEmpty()) {
+            return new ArrayList<ItemDto>();
+        }
         return itemService.getSearchedItems(text);
     }
 
@@ -41,7 +48,7 @@ public class ItemController {
         if (item.getName().isBlank()) {
             throw new ValidationException("Необходимо указать название вещи");
         }
-        if (item.getDescription().isBlank()) {
+        if (item.getDescription() == null) {
             throw new ValidationException("Необходимо указать описание вещи");
         }
 
@@ -51,5 +58,11 @@ public class ItemController {
     @PatchMapping("/{id}")
     public ItemDto updateItem(@PathVariable("id") Long id, @RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody ItemDto newItemRequest) {
         return itemService.updateItem(id, userId, ItemMapper.toItem(newItemRequest));
+    }
+
+    @PostMapping("/{itemId}/comment")
+    @ResponseStatus(HttpStatus.CREATED)
+    public CommentDto addComment(@PathVariable("itemId") Long itemId, @Valid @RequestBody CommentRequest request, @RequestHeader("X-Sharer-User-Id") Long userId) {
+        return itemService.addComment(itemId, userId, request.getText());
     }
 }
