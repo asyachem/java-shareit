@@ -35,16 +35,9 @@ public class BookingServiceImpl implements BookingService {
         if (!item.getAvailable()) {
             throw new ValidationException("Вещь не доступна для бронирования");
         }
-        if (request.getStart() == null || request.getEnd() == null) {
-            throw new ValidationException("Дата начала и окончания бронирования должны быть указаны");
-        }
 
-        if (request.getStart().isAfter(request.getEnd())) {
-            throw new ValidationException("Дата начала бронирования не может быть позже даты окончания");
-        }
-
-        if (request.getStart().isEqual(request.getEnd())) {
-            throw new ValidationException("Дата начала бронирования не может быть равна дате окончания");
+        if (!request.getStart().isBefore(request.getEnd())) {
+            throw new ValidationException("Дата начала бронирования не может быть позже или равна дате окончания");
         }
 
         for (Booking booking : approvedBookings) {
@@ -58,8 +51,8 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.toBookingDto(booking);
     }
 
-    private boolean isTimeOverlap(LocalDateTime start1, LocalDateTime end1, LocalDateTime start2, LocalDateTime end2) {
-        return !(end1.isBefore(start2) || end2.isBefore(start1));
+    private boolean isTimeOverlap(LocalDateTime newStart, LocalDateTime newEnd, LocalDateTime existStart, LocalDateTime existEnd) {
+        return !(newEnd.isBefore(existStart) || newStart.isAfter(existEnd));
     }
 
     @Override
