@@ -52,7 +52,6 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public ItemRequestDto getInfoRequest(Long requestId) {
-        Item item = new Item();
         ItemRequest itemRequest = requestRepository.findByIdWithItems(requestId);
         return RequestMapper.toItemRequestDto(itemRequest);
     }
