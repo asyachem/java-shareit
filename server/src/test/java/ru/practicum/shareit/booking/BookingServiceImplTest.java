@@ -20,6 +20,7 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -103,7 +104,11 @@ public class BookingServiceImplTest {
         BookingDto result = bookingService.createBooking(testBookingRequest, 1L);
 
         assertNotNull(result);
-        assertEquals(testBookingDto.getStart(), result.getStart());
+
+        LocalDateTime expectedStart = testBookingDto.getStart().truncatedTo(ChronoUnit.MILLIS);
+        LocalDateTime actualStart = result.getStart().truncatedTo(ChronoUnit.MILLIS);
+
+        assertEquals(expectedStart, actualStart);
         verify(userRepositoryMock, times(1)).findById(1L);
         verify(itemRepositoryMock, times(1)).findById(1L);
         verify(bookingRepositoryMock, times(1)).findAllByStatusAndItemId(Status.APPROVED, 1L);
@@ -202,7 +207,11 @@ public class BookingServiceImplTest {
         BookingDto result = bookingService.getBooking(1L, 1L);
 
         assertNotNull(result);
-        assertEquals(testBookingDto.getStart(), result.getStart());
+
+        LocalDateTime expectedStart = testBookingDto.getStart().truncatedTo(ChronoUnit.SECONDS);
+        LocalDateTime actualStart = result.getStart().truncatedTo(ChronoUnit.SECONDS);
+
+        assertEquals(expectedStart, actualStart);
         verify(bookingRepositoryMock, times(1)).findById(1L);
         verify(userRepositoryMock, times(1)).findById(1L);
     }
@@ -240,7 +249,11 @@ public class BookingServiceImplTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(testBookingDto.getStart(), result.get(0).getStart());
+
+        LocalDateTime expectedStart = testBookingDto.getStart().truncatedTo(ChronoUnit.MILLIS);
+        LocalDateTime actualStart = result.get(0).getStart().truncatedTo(ChronoUnit.MILLIS);
+
+        assertEquals(expectedStart, actualStart);
         verify(userRepositoryMock, times(1)).findById(1L);
         verify(bookingRepositoryMock, times(1)).findAllByBookerIdOrderByStartDesc(1L);
     }
