@@ -15,7 +15,6 @@ public interface RequestRepository extends JpaRepository<ItemRequest, Long> {
     @Query("SELECT ir FROM ItemRequest ir LEFT JOIN FETCH ir.items ORDER BY ir.created DESC")
     List<ItemRequest> findAllWithItems();
 
-    // @Query("SELECT ir FROM ItemRequest ir LEFT JOIN FETCH ir.items WHERE ir.id = :requestId ORDER BY ir.created DESC")
     @Query("SELECT ir FROM ItemRequest ir WHERE ir.id = :requestId ORDER BY ir.created DESC")
     ItemRequest findByIdWithItems(@Param("requestId") Long requestId);
 }
