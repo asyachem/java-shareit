@@ -16,6 +16,7 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.model.ItemIncoming;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
 import ru.practicum.shareit.request.repository.RequestRepository;
@@ -56,6 +57,7 @@ public class ItemServiceImplTest {
 
     private User testUser;
     private Item testItem;
+    private ItemIncoming testItemIncoming;
     private ItemDto testItemDto;
     private Comment testComment;
     private CommentDto testCommentDto;
@@ -76,6 +78,14 @@ public class ItemServiceImplTest {
         testItem.setOwner(testUser);
 
         testItemDto = new ItemDto();
+        testItemDto.setId(1L);
+        testItemDto.setName("Test Item");
+        testItemDto.setDescription("Test Description");
+        testItemDto.setAvailable(true);
+        testItem.setAvailable(true);
+        testItem.setOwner(testUser);
+
+        testItemIncoming = new ItemIncoming();
         testItemDto.setId(1L);
         testItemDto.setName("Test Item");
         testItemDto.setDescription("Test Description");
@@ -162,7 +172,7 @@ public class ItemServiceImplTest {
         when(userRepositoryMock.findById(any(Long.class))).thenReturn(Optional.of(testUser));
         when(itemRepositoryMock.save(any(Item.class))).thenReturn(testItem);
 
-        ItemDto result = itemService.createItem(testItemDto, 1L);
+        ItemDto result = itemService.createItem(testItemIncoming, 1L);
 
         assertNotNull(result);
         assertEquals(testItemDto.getName(), result.getName());
@@ -174,7 +184,7 @@ public class ItemServiceImplTest {
     void createItem_ShouldThrowNotFoundException_WhenUserNotFound() {
         when(userRepositoryMock.findById(any(Long.class))).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> itemService.createItem(testItemDto, 1L));
+        assertThrows(NotFoundException.class, () -> itemService.createItem(testItemIncoming, 1L));
         verify(userRepositoryMock, times(1)).findById(1L);
         verify(itemRepositoryMock, never()).save(any(Item.class));
     }
@@ -185,7 +195,7 @@ public class ItemServiceImplTest {
         when(itemRepositoryMock.findByIdWithComments(any(Long.class))).thenReturn(Optional.of(testItem));
         when(itemRepositoryMock.save(any(Item.class))).thenReturn(testItem);
 
-        ItemDto result = itemService.updateItem(1L, 1L, testItemDto);
+        ItemDto result = itemService.updateItem(1L, 1L, testItemIncoming);
 
         assertNotNull(result);
         assertEquals(testItemDto.getName(), result.getName());
@@ -198,7 +208,7 @@ public class ItemServiceImplTest {
     void updateItem_ShouldThrowNotFoundException_WhenUserNotFound() {
         when(userRepositoryMock.findById(any(Long.class))).thenReturn(Optional.empty());
 
-        assertThrows(NotFoundException.class, () -> itemService.updateItem(1L, 1L, testItemDto));
+        assertThrows(NotFoundException.class, () -> itemService.updateItem(1L, 1L, testItemIncoming));
         verify(userRepositoryMock, times(1)).findById(1L);
         verify(itemRepositoryMock, never()).findByIdWithComments(any(Long.class));
         verify(itemRepositoryMock, never()).save(any(Item.class));
@@ -214,7 +224,7 @@ public class ItemServiceImplTest {
         when(userRepositoryMock.findById(any(Long.class))).thenReturn(Optional.of(anotherUser));
         when(itemRepositoryMock.findByIdWithComments(any(Long.class))).thenReturn(Optional.of(testItem));
 
-        assertThrows(ValidationException.class, () -> itemService.updateItem(1L, 2L, testItemDto));
+        assertThrows(ValidationException.class, () -> itemService.updateItem(1L, 2L, testItemIncoming));
         verify(userRepositoryMock, times(1)).findById(2L);
         verify(itemRepositoryMock, times(1)).findByIdWithComments(1L);
         verify(itemRepositoryMock, never()).save(any(Item.class));

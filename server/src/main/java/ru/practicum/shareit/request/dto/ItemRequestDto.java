@@ -1,6 +1,5 @@
 package ru.practicum.shareit.request.dto;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import ru.practicum.shareit.request.model.ItemResponse;
 
@@ -12,7 +11,6 @@ import java.util.List;
 public class ItemRequestDto {
     private Long id;
 
-    @NotNull(message = "Отсутствует описание")
     private String description;
 
     private LocalDateTime created;

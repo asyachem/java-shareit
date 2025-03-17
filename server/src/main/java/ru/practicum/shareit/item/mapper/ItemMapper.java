@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.mapper;
 import ru.practicum.shareit.comment.mapper.CommentMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.model.ItemIncoming;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.User;
 
@@ -22,7 +23,7 @@ public class ItemMapper {
         return itemDto;
     }
 
-    public static Item updateItemField(Item item, ItemDto newItemRequest) {
+    public static Item updateItemField(Item item, ItemIncoming newItemRequest) {
         if (newItemRequest.getName() != null) {
             item.setName(newItemRequest.getName());
         }
@@ -38,7 +39,7 @@ public class ItemMapper {
         return item;
     }
 
-    public static Item toItem(ItemDto itemDto, User user, ItemRequest itemRequest) {
+    public static Item toItem(ItemIncoming itemDto, User user, ItemRequest itemRequest) {
         Item item = new Item();
         item.setId(itemDto.getId());
         item.setName(itemDto.getName());

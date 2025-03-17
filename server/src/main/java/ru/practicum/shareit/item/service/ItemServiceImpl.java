@@ -14,6 +14,7 @@ import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.model.ItemIncoming;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.RequestRepository;
@@ -51,7 +52,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto createItem(ItemDto itemDto, Long userId) {
+    public ItemDto createItem(ItemIncoming itemDto, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
         ItemRequest itemRequest = null;
@@ -64,7 +65,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto updateItem(Long itemId, Long userId, ItemDto newItemRequest) {
+    public ItemDto updateItem(Long itemId, Long userId, ItemIncoming newItemRequest) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         Item item = itemRepository.findByIdWithComments(itemId).orElseThrow(() -> new NotFoundException("Объект не найден"));
 

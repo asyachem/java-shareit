@@ -83,7 +83,7 @@ public class ItemRequestServiceImplTest {
     @Test
     void getUserRequests_ShouldReturnListOfRequests() {
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(testUser));
-        when(requestRepository.findAllByRequesterIdWithItems(any(Long.class))).thenReturn(Collections.singletonList(testItemRequest));
+        when(requestRepository.findAllByRequesterIdOrderByCreatedDesc(any(Long.class))).thenReturn(Collections.singletonList(testItemRequest));
 
         List<ItemRequestDto> result = requestService.getUserRequests(1L);
 
@@ -91,7 +91,7 @@ public class ItemRequestServiceImplTest {
         assertEquals(1, result.size());
         assertEquals(testItemRequestDto.getDescription(), result.get(0).getDescription());
         verify(userRepository, times(1)).findById(1L);
-        verify(requestRepository, times(1)).findAllByRequesterIdWithItems(1L);
+        verify(requestRepository, times(1)).findAllByRequesterIdOrderByCreatedDesc(1L);
     }
 
     @Test
@@ -100,29 +100,29 @@ public class ItemRequestServiceImplTest {
 
         assertThrows(NotFoundException.class, () -> requestService.getUserRequests(1L));
         verify(userRepository, times(1)).findById(1L);
-        verify(requestRepository, never()).findAllByRequesterIdWithItems(any(Long.class));
+        verify(requestRepository, never()).findAllByRequesterIdOrderByCreatedDesc(any(Long.class));
     }
 
     @Test
     void getAllRequests_ShouldReturnListOfRequests() {
-        when(requestRepository.findAllWithItems()).thenReturn(Collections.singletonList(testItemRequest));
+        when(requestRepository.findAllByOrderByCreatedDesc()).thenReturn(Collections.singletonList(testItemRequest));
 
         List<ItemRequestDto> result = requestService.getAllRequests();
 
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(testItemRequestDto.getDescription(), result.get(0).getDescription());
-        verify(requestRepository, times(1)).findAllWithItems();
+        verify(requestRepository, times(1)).findAllByOrderByCreatedDesc();
     }
 
     @Test
     void getInfoRequest_ShouldReturnRequest() {
-        when(requestRepository.findByIdWithItems(any(Long.class))).thenReturn(testItemRequest);
+        when(requestRepository.findById(any(Long.class))).thenReturn(Optional.ofNullable(testItemRequest));
 
         ItemRequestDto result = requestService.getInfoRequest(1L);
 
         assertNotNull(result);
         assertEquals(testItemRequestDto.getDescription(), result.getDescription());
-        verify(requestRepository, times(1)).findByIdWithItems(1L);
+        verify(requestRepository, times(1)).findById(1L);
     }
 }

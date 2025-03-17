@@ -20,7 +20,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -126,23 +125,6 @@ public class UserControllerTest {
 
             verify(userService, times(1)).createUser(mappedUser);
         }
-    }
-
-    @Test
-    void createUser_withInvalidEmail_shouldReturnBadRequest() throws Exception {
-        UserDto userWithoutEmail = new UserDto();
-        userWithoutEmail.setName("Invalid user");
-        userWithoutEmail.setEmail(null);
-
-        mockMvc.perform(
-                        MockMvcRequestBuilders.post("/users")
-                                .content(objectMapper.writeValueAsString(userWithoutEmail))
-                                .characterEncoding(StandardCharsets.UTF_8)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-
-        verify(userService, times(0)).createUser(any());
     }
 
     @Test

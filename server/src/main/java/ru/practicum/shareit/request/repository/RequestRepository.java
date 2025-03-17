@@ -1,20 +1,20 @@
 package ru.practicum.shareit.request.repository;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import ru.practicum.shareit.request.model.ItemRequest;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RequestRepository extends JpaRepository<ItemRequest, Long> {
 
-    @Query("SELECT ir FROM ItemRequest ir LEFT JOIN FETCH ir.items WHERE ir.requester.id = :requesterId ORDER BY ir.created DESC")
-    List<ItemRequest> findAllByRequesterIdWithItems(Long requesterId);
+    @EntityGraph(attributePaths = {"items"})
+    List<ItemRequest> findAllByRequesterIdOrderByCreatedDesc(Long requesterId);
 
-    @Query("SELECT ir FROM ItemRequest ir LEFT JOIN FETCH ir.items ORDER BY ir.created DESC")
-    List<ItemRequest> findAllWithItems();
+    @EntityGraph(attributePaths = {"items"})
+    List<ItemRequest> findAllByOrderByCreatedDesc();
 
-    @Query("SELECT ir FROM ItemRequest ir WHERE ir.id = :requestId ORDER BY ir.created DESC")
-    ItemRequest findByIdWithItems(@Param("requestId") Long requestId);
+    @EntityGraph(attributePaths = {"items"})
+    Optional<ItemRequest> findById(Long requestId);
 }

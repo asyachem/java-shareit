@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.CommentRequest;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemIncoming;
 
 @Controller
 @RequestMapping(path = "/items")
@@ -40,14 +41,14 @@ public class ItemController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Object> createItem(@Valid @RequestBody ItemDto item, @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ResponseEntity<ItemDto> createItem(@Valid @RequestBody ItemIncoming item, @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Create item {}, user id {}", item, userId);
         return itemClient.createItem(item, userId);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> updateItem(@PathVariable("id") Long id, @RequestHeader("X-Sharer-User-Id") Long userId,
-                                             @RequestBody ItemDto newItemRequest) {
+    public ResponseEntity<ItemDto> updateItem(@PathVariable("id") Long id, @RequestHeader("X-Sharer-User-Id") Long userId,
+                                             @RequestBody ItemIncoming newItemRequest) {
         log.info("Update item id {}, user id {}, new item {}", id, userId, newItemRequest);
         return itemClient.updateItem(id, userId, newItemRequest);
     }

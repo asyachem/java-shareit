@@ -33,7 +33,7 @@ public class RequestServiceImpl implements RequestService {
     public List<ItemRequestDto> getUserRequests(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
-        return requestRepository.findAllByRequesterIdWithItems(userId)
+        return requestRepository.findAllByRequesterIdOrderByCreatedDesc(userId)
                 .stream()
                 .map(RequestMapper::toItemRequestDto)
                 .collect(Collectors.toList());
@@ -41,7 +41,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public List<ItemRequestDto> getAllRequests() {
-        return requestRepository.findAllWithItems()
+        return requestRepository.findAllByOrderByCreatedDesc()
                 .stream()
                 .map(RequestMapper::toItemRequestDto)
                 .collect(Collectors.toList());
@@ -49,7 +49,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public ItemRequestDto getInfoRequest(Long requestId) {
-        ItemRequest itemRequest = requestRepository.findByIdWithItems(requestId);
+        ItemRequest itemRequest = requestRepository.findById(requestId).orElseThrow(() -> new NotFoundException("Запрос не найден"));
         return RequestMapper.toItemRequestDto(itemRequest);
     }
 }

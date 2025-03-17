@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 
 import ru.practicum.shareit.comment.model.CommentRequest;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.ItemIncoming;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.comment.dto.CommentDto;
 
@@ -127,7 +128,7 @@ public class ItemControllerTest {
     @Test
     void createItem_ShouldReturnCreatedItem() throws Exception {
         Long userId = 1L;
-        when(itemService.createItem(any(ItemDto.class), eq(userId))).thenReturn(testItemDto);
+        when(itemService.createItem(any(ItemIncoming.class), eq(userId))).thenReturn(testItemDto);
 
         mockMvc.perform(post("/items")
                         .header("X-Sharer-User-Id", userId)
@@ -151,7 +152,7 @@ public class ItemControllerTest {
         updatedItemDto.setDescription("Updated Description");
         updatedItemDto.setAvailable(false);
 
-        when(itemService.updateItem(eq(itemId), eq(userId), any(ItemDto.class))).thenReturn(updatedItemDto);
+        when(itemService.updateItem(eq(itemId), eq(userId), any(ItemIncoming.class))).thenReturn(updatedItemDto);
 
         mockMvc.perform(patch("/items/{id}", itemId)
                         .header("X-Sharer-User-Id", userId)
